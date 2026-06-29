@@ -1,207 +1,140 @@
 import os
 import requests
 import random
+import json
+import datetime
 from PIL import Image, ImageDraw, ImageFont
 import io
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = os.environ.get("TELEGRAM_CHANNEL_ID")
 
-quotes = [
-    {"text": "آنچه در آینه نتوان دید، در چشم دیگران توان یافت.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #حکمت"},
-    {"text": "عشق یعنی دیدن خدا در چهره انسان‌ها.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #عشق"},
-    {"text": "دل آدمی خانه خداست، آن را پاک نگه‌دار.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #دل"},
-    {"text": "در خاموشی راز هستی نهفته است.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #عرفان"},
-    {"text": "هر صبح که چشم می‌گشایی، هدیه‌ای تازه از خداست.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #شکرگزاری"},
-    {"text": "کتاب دریچه‌ای است به سوی روح انسان‌های بزرگ.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #کتاب"},
-    {"text": "زیباترین لحظه زندگی آن است که انسان خود را فراموش کند.", "author": "دکتر الهی قمشه‌ای", "tags": "#الهی_قمشه_ای #زندگی"},
-    {"text": "بشر را محبت کافی است برای رستگاری.", "author": "لئو تولستوی", "tags": "#تولستوی #محبت"},
-    {"text": "زندگی کوتاه است، پس آن را با کینه تلف مکن.", "author": "لئو تولستوی", "tags": "#تولستوی #زندگی"},
-    {"text": "خوشبختی در راهی است که طی می‌کنی.", "author": "لئو تولستوی", "tags": "#تولستوی #خوشبختی"},
-    {"text": "همه می‌خواهند دنیا را تغییر دهند، اما کسی نمی‌خواهد خود را تغییر دهد.", "author": "لئو تولستوی", "tags": "#تولستوی #تغییر"},
-    {"text": "مهم‌ترین لحظه همیشه حال است.", "author": "لئو تولستوی", "tags": "#تولستوی #حال"},
-    {"text": "عشق واقعی یعنی خواستن خوشبختی دیگری.", "author": "لئو تولستوی", "tags": "#تولستوی #عشق"},
-    {"text": "توانا بود هر که دانا بود.", "author": "فردوسی", "tags": "#فردوسی #شاهنامه"},
-    {"text": "الهی چنان کن سرانجام کار، تو خشنود باشی و ما رستگار.", "author": "فردوسی", "tags": "#فردوسی #دعا"},
-    {"text": "میازار موری که دانه‌کش است، که جان دارد و جان شیرین خوش است.", "author": "فردوسی", "tags": "#فردوسی #رحمت"},
-    {"text": "چو ایران نباشد تن من مباد.", "author": "فردوسی", "tags": "#فردوسی #ایران"},
-    {"text": "بنی آدم اعضای یک پیکرند.", "author": "سعدی", "tags": "#سعدی #انسانیت"},
-    {"text": "علم بی عمل چون درخت بی ثمر است.", "author": "سعدی", "tags": "#سعدی #علم"},
-    {"text": "تندرستی گنجی است پنهان.", "author": "سعدی", "tags": "#سعدی #سلامت"},
-    {"text": "هر که نیاموخت از گذشت روزگار، هیچ نیاموزد ز هیچ آموزگار.", "author": "سعدی", "tags": "#سعدی #تجربه"},
-    {"text": "از دست و زبان که برآید، کز عهده شکرش به در آید.", "author": "سعدی", "tags": "#سعدی #شکرگزاری"},
-    {"text": "هر که را اسرار حق آموختند، مهر کردند و دهانش دوختند.", "author": "مولانا", "tags": "#مولانا #عرفان"},
-    {"text": "از کوزه همان برون تراود که در اوست.", "author": "مولانا", "tags": "#مولانا #حکمت"},
-    {"text": "خاموشی دریای علم است و کلام چون ساحل.", "author": "مولانا", "tags": "#مولانا #سکوت"},
-    {"text": "آتش عشق است کاندر نی فتاد.", "author": "مولانا", "tags": "#مولانا #عشق"},
-    {"text": "بشنو این نی چون شکایت می‌کند، از جدایی‌ها حکایت می‌کند.", "author": "مولانا", "tags": "#مولانا #مثنوی"},
-    {"text": "مرگ را هر لحظه می‌بینم عیان، هیچ نیست این زندگی کوته‌تر از آن.", "author": "مولانا", "tags": "#مولانا #زندگی"},
-    {"text": "عشق آمد عقل را بیگانه کرد.", "author": "مولانا", "tags": "#مولانا #عشق"},
-    {"text": "هر که جز ماهی ز آبش سیر شد، هر که بی‌روزی است روزش دیر شد.", "author": "مولانا", "tags": "#مولانا #صبر"},
-    {"text": "الا یا ایها الساقی ادر کاسا و ناولها.", "author": "حافظ", "tags": "#حافظ #غزل"},
-    {"text": "حافظ غم دل با که بگویم که در این دور، جز جام نیست محرم اسرار.", "author": "حافظ", "tags": "#حافظ #دل"},
-    {"text": "دلا بسوز که سوز تو کارها بکند.", "author": "حافظ", "tags": "#حافظ #عشق"},
-    {"text": "می خور که عاقل‌تری از این کارها نیست.", "author": "حافظ", "tags": "#حافظ #حکمت"},
-    {"text": "رسید مژده که ایام غم نخواهد ماند.", "author": "حافظ", "tags": "#حافظ #امید"},
-    {"text": "بیا که قصر امل سخت سست بنیاد است.", "author": "حافظ", "tags": "#حافظ #زندگی"},
-    {"text": "سالک را سه نشانه است: کم خوردن، کم خفتن، کم گفتن.", "author": "خواجه عبدالله انصاری", "tags": "#انصاری #عرفان"},
-    {"text": "الهی اگر بهشت را آفریدی، برای ما کافی است که تو را می‌شناسیم.", "author": "خواجه عبدالله انصاری", "tags": "#انصاری #معرفت"},
-    {"text": "همه چیز را می توان از انسان گرفت، مگر آزادی انتخاب نگرش.", "author": "ویکتور فرانکل", "tags": "#فرانکل #آزادی"},
-    {"text": "کسی که دلیلی برای زندگی دارد، هر چگونه زیستنی را تحمل می‌کند.", "author": "ویکتور فرانکل", "tags": "#فرانکل #زندگی"},
-    {"text": "انسان می‌تواند در هر شرایطی معنا بیابد.", "author": "ویکتور فرانکل", "tags": "#فرانکل #معنا"},
-    {"text": "زندگی یک هنر است، و مثل هر هنری باید تمرین کرد.", "author": "اریک فروم", "tags": "#فروم #زندگی"},
-    {"text": "عشق تنها پاسخ معقول به مسئله وجود انسان است.", "author": "اریک فروم", "tags": "#فروم #عشق"},
-    {"text": "تنها راه گریز از دیوانگی، عاشق شدن است.", "author": "دوستایوفسکی", "tags": "#دوستایوفسکی #عشق"},
-    {"text": "زیبایی جهان را نجات خواهد داد.", "author": "دوستایوفسکی", "tags": "#دوستایوفسکی #زیبایی"},
-    {"text": "انسان موجودی است که به همه چیز عادت می‌کند.", "author": "دوستایوفسکی", "tags": "#دوستایوفسکی #انسان"},
-    {"text": "دوست داشتن یعنی دیدن انسان آنگونه که خدا او را آفریده.", "author": "دوستایوفسکی", "tags": "#دوستایوفسکی #عشق"},
-    {"text": "هر لحظه که با خود صادق باشی، لحظه‌ای است که زندگی کرده‌ای.", "author": "دل نوشت", "tags": "#دل_نوشت #صداقت"},
-    {"text": "گاهی تنها ماندن نشانه رشد است، نه شکست.", "author": "دل نوشت", "tags": "#دل_نوشت #تنهایی"},
-    {"text": "اگر همه رفتند، شاید وقت آن رسیده که با خودت بمانی.", "author": "دل نوشت", "tags": "#دل_نوشت #خودشناسی"},
-    {"text": "درد هم معلم است، اگر بگذاری درس بدهد.", "author": "دل نوشت", "tags": "#دل_نوشت #رشد"},
-    {"text": "بعضی آدم‌ها برای یاد دادن می‌آیند، نه برای ماندن.", "author": "دل نوشت", "tags": "#دل_نوشت #تجربه"},
-    {"text": "هر چیزی که از دست می‌دهی، جایش را چیز بهتری می‌گیرد.", "author": "دل نوشت", "tags": "#دل_نوشت #امید"},
-    {"text": "سکوتت گاهی بلندتر از هر فریادی است.", "author": "دل نوشت", "tags": "#دل_نوشت #سکوت"},
-    {"text": "آنچه را که امروز نمی‌فهمی، فردا در آیینه زندگی خواهی دید.", "author": "دل نوشت", "tags": "#دل_نوشت #زندگی"},
-    {"text": "فلسفه یاد می‌دهد که چطور بمیریم، تا یاد بگیریم چطور زندگی کنیم.", "author": "میشل دو مونتنی", "tags": "#مونتنی #فلسفه"},
-    {"text": "می‌اندیشم پس هستم.", "author": "رنه دکارت", "tags": "#دکارت #فلسفه"},
-    {"text": "آنچه مرا نکشد، قوی‌ترم می‌کند.", "author": "نیچه", "tags": "#نیچه #قدرت"},
-    {"text": "خدا مرده است و ما او را کشته‌ایم.", "author": "نیچه", "tags": "#نیچه #فلسفه"},
-    {"text": "انسان چیزی است که باید از آن فراتر رفت.", "author": "نیچه", "tags": "#نیچه #رشد"},
-    {"text": "تنها زندگی که ارزش زیستن دارد، زندگی برای دیگران است.", "author": "آلبرت اینشتین", "tags": "#اینشتین #زندگی"},
-    {"text": "تخیل مهم‌تر از دانش است.", "author": "آلبرت اینشتین", "tags": "#اینشتین #خلاقیت"},
-    {"text": "دو چیز بی‌نهایت است: کیهان و حماقت بشر.", "author": "آلبرت اینشتین", "tags": "#اینشتین #حکمت"},
-    {"text": "در میان تاریکی نور خود باش.", "author": "مارتین لوتر کینگ", "tags": "#کینگ #امید"},
-    {"text": "بزرگترین انقلاب نسل ما این است که انسان می‌تواند با تغییر نگرشش زندگی‌اش را تغییر دهد.", "author": "ویلیام جیمز", "tags": "#جیمز #تغییر"},
-    {"text": "هنر زندگی نه در نداشتن مشکل، بلکه در حل آن است.", "author": "هنری توماس", "tags": "#حکمت #زندگی"},
-    {"text": "کسی که می‌خواند، دو بار زندگی می‌کند.", "author": "امبرتو اکو", "tags": "#اکو #کتاب"},
-    {"text": "کتاب‌ها آینه‌ای هستند که ما را با خودمان روبرو می‌کنند.", "author": "دل نوشت", "tags": "#کتاب #خودشناسی"},
-    {"text": "وقتی گم می‌شوی، کتاب بخوان تا خودت را پیدا کنی.", "author": "دل نوشت", "tags": "#کتاب #راه"},
-    {"text": "هر کتابی که می‌خوانی بخشی از تو می‌شود.", "author": "دل نوشت", "tags": "#کتاب #رشد"},
-    {"text": "خواندن یعنی سفر بدون ترک خانه.", "author": "دل نوشت", "tags": "#کتاب #سفر"},
-    {"text": "اگر نمی‌توانی پرواز کنی، بدو. اگر نمی‌توانی بدوی، راه برو.", "author": "مارتین لوتر کینگ", "tags": "#کینگ #امید"},
-    {"text": "شجاعت یعنی ترسیدن و باز هم قدم برداشتن.", "author": "نلسون ماندلا", "tags": "#ماندلا #شجاعت"},
-    {"text": "آموزش قوی‌ترین سلاحی است که می‌توانی برای تغییر دنیا استفاده کنی.", "author": "نلسون ماندلا", "tags": "#ماندلا #آموزش"},
-    {"text": "وقتی دیگر نمی‌توانی ادامه دهی، به یاد بیاور چرا شروع کردی.", "author": "دل نوشت", "tags": "#دل_نوشت #انگیزه"},
-    {"text": "گاهی خاموش ماندن بلیغ‌ترین سخن است.", "author": "علی ابن ابیطالب", "tags": "#امام_علی #حکمت"},
-    {"text": "ارزش هر کس به اندازه همت اوست.", "author": "علی ابن ابیطالب", "tags": "#امام_علی #همت"},
-    {"text": "دانش گنجی است که صاحبش را می‌پاید.", "author": "علی ابن ابیطالب", "tags": "#امام_علی #دانش"},
-    {"text": "با مردم چنان باش که اگر مردی بر تو بگریند و اگر زیستی مشتاقت باشند.", "author": "علی ابن ابیطالب", "tags": "#امام_علی #اخلاق"},
-    {"text": "در دل هر انسانی چراغی است؛ عشق آن را روشن می‌کند.", "author": "دل نوشت", "tags": "#دل_نوشت #عشق"},
-    {"text": "تنهایی عذاب نیست اگر با خودت باشی.", "author": "دل نوشت", "tags": "#دل_نوشت #تنهایی"},
-    {"text": "گاهی باید بگذاری بروند تا بفهمی چه داشتی.", "author": "دل نوشت", "tags": "#دل_نوشت #جدایی"},
-    {"text": "هر شب که می‌خوابی با نسخه‌ای از خودت خداحافظی می‌کنی.", "author": "دل نوشت", "tags": "#دل_نوشت #تحول"},
-    {"text": "ریشه درخت را نمی‌بینی ولی می‌دانی هست؛ ایمان هم همین است.", "author": "دل نوشت", "tags": "#دل_نوشت #ایمان"},
-    {"text": "دنیا آینه است؛ هرچه در آن ببینی بازتاب درون توست.", "author": "دل نوشت", "tags": "#دل_نوشت #خودشناسی"},
-    {"text": "سکوت زبان عاشقان است.", "author": "رومی", "tags": "#رومی #عشق"},
-    {"text": "قلب هر انسانی کتابی است؛ بخوانش.", "author": "دل نوشت", "tags": "#دل_نوشت #معرفت"},
-    {"text": "کسی که امروز را دوست دارد، نگران فردا نیست.", "author": "دل نوشت", "tags": "#دل_نوشت #حال"},
-    {"text": "آدم وقتی می‌شکند، تازه می‌فهمد از چه ساخته شده.", "author": "دل نوشت", "tags": "#دل_نوشت #قدرت"},
-    {"text": "وقتی همه در می‌روند، خدا می‌ماند.", "author": "دل نوشت", "tags": "#دل_نوشت #ایمان"},
-    {"text": "بعضی زخم‌ها برای همیشه نمی‌مانند؛ فقط جایشان می‌ماند.", "author": "دل نوشت", "tags": "#دل_نوشت #التیام"},
-    {"text": "دنیا به کسی وفا نکرد که دل بست.", "author": "حافظ", "tags": "#حافظ #دنیا"},
-    {"text": "خوش باش دل که باز آید آنچه رفت.", "author": "حافظ", "tags": "#حافظ #امید"},
-    {"text": "هر که آمد عمارت نو ساخت، رفت و منزل به دیگری پرداخت.", "author": "خیام", "tags": "#خیام #زندگی"},
-    {"text": "می خور که عقل را این سخن خوش آید.", "author": "خیام", "tags": "#خیام #حکمت"},
+# دسته‌بندی جملات با رنگ و آیکون مخصوص
+CATEGORIES = {
+    "عرفان":     {"color1": (40, 20, 70),  "color2": (100, 50, 150), "icon": "🌙"},
+    "عشق":       {"color1": (80, 20, 30),  "color2": (160, 50, 70),  "icon": "🌹"},
+    "حکمت":      {"color1": (20, 50, 80),  "color2": (40, 100, 150), "icon": "✨"},
+    "انگیزشی":   {"color1": (60, 40, 10),  "color2": (160, 110, 30), "icon": "⚡"},
+    "دل_نوشت":   {"color1": (30, 50, 40),  "color2": (60, 120, 80),  "icon": "💚"},
+    "فلسفه":     {"color1": (20, 20, 60),  "color2": (50, 50, 120),  "icon": "🔮"},
+    "صبح":       {"color1": (80, 50, 10),  "color2": (200, 140, 40), "icon": "🌅"},
+    "شب":        {"color1": (10, 10, 40),  "color2": (30, 30, 80),   "icon": "🌃"},
+}
+
+quotes_morning = [
+    {"text": "هر صبح که چشم می‌گشایی، هدیه‌ای تازه از خداست. از این هدیه قدردانی کن.", "author": "دکتر الهی قمشه‌ای", "cat": "صبح", "en": "Every morning you open your eyes is a fresh gift from God."},
+    {"text": "صبح را با شکرگزاری آغاز کن؛ روزی که با سپاس شروع شود، با برکت پایان می‌یابد.", "author": "دل نوشت", "cat": "صبح", "en": "Start the morning with gratitude; a day that begins with thanks ends with blessings."},
+    {"text": "هر سپیده‌دم فرصتی است که دیروز نداشتی؛ غنیمت بشمارش.", "author": "دل نوشت", "cat": "صبح", "en": "Every dawn is an opportunity you didn't have yesterday; treasure it."},
+    {"text": "صبح اول دوست خود باش، بعد به دنبال دوست دیگر برو.", "author": "دل نوشت", "cat": "صبح", "en": "In the morning, first be your own friend, then seek others."},
+    {"text": "با طلوع آفتاب، امید تازه‌ای در دل بکار؛ که هر روز بذر جدیدی است.", "author": "دل نوشت", "cat": "صبح", "en": "With the sunrise, plant fresh hope in your heart; every day is a new seed."},
 ]
 
-gradients = [
-    [(25, 25, 112), (72, 61, 139)],
-    [(44, 62, 80), (52, 152, 219)],
-    [(39, 60, 54), (56, 132, 95)],
-    [(74, 20, 60), (130, 50, 100)],
-    [(80, 50, 20), (180, 120, 40)],
-    [(20, 50, 80), (40, 100, 140)],
-    [(60, 20, 20), (140, 60, 40)],
-    [(30, 30, 60), (80, 40, 120)],
+quotes_night = [
+    {"text": "شب که می‌شود، دل می‌خواهد سکوت؛ که در سکوت، خدا سخن می‌گوید.", "author": "دل نوشت", "cat": "شب", "en": "When night comes, the heart craves silence; for in silence, God speaks."},
+    {"text": "پیش از خواب از خود بپرس: امروز چه کسی بهتری بودم؟", "author": "دل نوشت", "cat": "شب", "en": "Before sleeping, ask yourself: who was I better for today?"},
+    {"text": "شب‌هایی که نمی‌توانی بخوابی، شاید روحت چیزی برای گفتن دارد.", "author": "دل نوشت", "cat": "شب", "en": "Nights you can't sleep, perhaps your soul has something to say."},
+    {"text": "در دل شب، ستاره‌ها پیدا می‌شوند؛ در دل غم هم، نور پنهان است.", "author": "دل نوشت", "cat": "شب", "en": "In the heart of night, stars appear; in the heart of sorrow, light is hidden."},
+    {"text": "هر شب که می‌خوابی با نسخه‌ای از خودت خداحافظی می‌کنی؛ فردا کسی تازه‌تر بیدار می‌شود.", "author": "دل نوشت", "cat": "شب", "en": "Every night you sleep, you say goodbye to a version of yourself; tomorrow someone fresher wakes."},
 ]
 
-def create_gradient(width, height, color1, color2):
-    image = Image.new('RGB', (width, height))
-    draw = ImageDraw.Draw(image)
-    for y in range(height):
-        ratio = y / height
-        r = int(color1[0] + (color2[0] - color1[0]) * ratio)
-        g = int(color1[1] + (color2[1] - color1[1]) * ratio)
-        b = int(color1[2] + (color2[2] - color1[2]) * ratio)
-        draw.line([(0, y), (width, y)], fill=(r, g, b))
-    return image
-
-def create_image(quote_text, author):
-    width, height = 1080, 1080
-    colors = random.choice(gradients)
-    img = create_gradient(width, height, colors[0], colors[1])
-    draw = ImageDraw.Draw(img)
-
-    draw.rectangle([(80, 80), (width-80, 84)], fill=(255, 215, 0))
-    draw.rectangle([(80, height-84), (width-80, height-80)], fill=(255, 215, 0))
-
-    try:
-        font_quote = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 46)
-        font_author = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
-    except:
-        font_quote = ImageFont.load_default()
-        font_author = font_quote
-
-    draw.text((width//2, 180), "❝", font=font_quote, fill=(255, 215, 0), anchor="mm")
-
-    max_chars = 24
-    words = quote_text.split()
-    lines = []
-    current_line = ""
-    for word in words:
-        if len(current_line) + len(word) + 1 <= max_chars:
-            current_line += (" " + word if current_line else word)
-        else:
-            if current_line:
-                lines.append(current_line)
-            current_line = word
-    if current_line:
-        lines.append(current_line)
-
-    total_text_height = len(lines) * 68
-    start_y = (height - total_text_height) // 2 - 40
-
-    for i, line in enumerate(lines):
-        y = start_y + i * 68
-        draw.text((width//2, y), line, font=font_quote, fill=(255, 255, 255), anchor="mm")
-
-    draw.rectangle([(width//2 - 80, start_y + total_text_height + 25),
-                    (width//2 + 80, start_y + total_text_height + 28)],
-                   fill=(255, 215, 0))
-
-    draw.text((width//2, start_y + total_text_height + 65),
-              f"— {author}", font=font_author, fill=(255, 215, 0), anchor="mm")
-
-    draw.text((width//2, height - 115), "@sanchobook",
-              font=font_author, fill=(200, 200, 200), anchor="mm")
-
-    img_bytes = io.BytesIO()
-    img.save(img_bytes, format='PNG')
-    img_bytes.seek(0)
-    return img_bytes
-
-def send_quote():
-    quote = random.choice(quotes)
-    img_bytes = create_image(quote['text'], quote['author'])
-
-    caption = (
-        f"<i>{quote['text']}</i>\n\n"
-        f"— <b>{quote['author']}</b>\n\n"
-        f"{quote['tags']} #حکمت #عرفان"
-    )
-
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-    response = requests.post(url, data={
-        "chat_id": CHANNEL_ID,
-        "caption": caption,
-        "parse_mode": "HTML"
-    }, files={"photo": ("quote.png", img_bytes, "image/png")})
-
-    if response.status_code == 200:
-        print(f"ارسال شد: {quote['author']}")
-    else:
-        print(f"خطا: {response.text}")
-
-if __name__ == "__main__":
-    send_quote()
+quotes_main = [
+    # الهی قمشه‌ای
+    {"text": "آنچه در آینه نتوان دید، در چشم دیگران توان یافت. نظر دوستان آیینه‌ای صادق‌تر است.", "author": "دکتر الهی قمشه‌ای", "cat": "حکمت", "en": "What cannot be seen in a mirror, can be found in the eyes of others."},
+    {"text": "عشق یعنی دیدن خدا در چهره انسان‌ها. هر که این راز را بفهمد، هرگز از انسان نمی‌گریزد.", "author": "دکتر الهی قمشه‌ای", "cat": "عشق", "en": "Love means seeing God in the face of humans."},
+    {"text": "دل آدمی خانه خداست، آن را پاک نگه‌دار تا خدا در آن ساکن شود.", "author": "دکتر الهی قمشه‌ای", "cat": "عرفان", "en": "The human heart is God's home; keep it pure so God may dwell within."},
+    {"text": "در خاموشی راز هستی نهفته است. آنکه زیاد می‌گوید، کمتر می‌فهمد.", "author": "دکتر الهی قمشه‌ای", "cat": "عرفان", "en": "In silence lies the secret of existence."},
+    {"text": "کتاب دریچه‌ای است به سوی روح انسان‌های بزرگ؛ بخوان تا بزرگ شوی.", "author": "دکتر الهی قمشه‌ای", "cat": "حکمت", "en": "A book is a window to the souls of great humans; read to become great."},
+    {"text": "زیباترین لحظه زندگی آن است که انسان خود را فراموش کند و در عشق گم شود.", "author": "دکتر الهی قمشه‌ای", "cat": "عشق", "en": "The most beautiful moment in life is when a person forgets themselves and gets lost in love."},
+    {"text": "انسان با مرگ تمام نمی‌شود؛ آنچه از انسان می‌ماند، محبتی است که در دل دیگران کاشته.", "author": "دکتر الهی قمشه‌ای", "cat": "عرفان", "en": "A person does not end with death; what remains is the love planted in others' hearts."},
+    {"text": "علم بدون عشق سرد است؛ عشق بدون علم کور. باید هر دو را با هم داشت.", "author": "دکتر الهی قمشه‌ای", "cat": "حکمت", "en": "Knowledge without love is cold; love without knowledge is blind."},
+    # مولانا
+    {"text": "بشنو این نی چون شکایت می‌کند، از جدایی‌ها حکایت می‌کند. هر که از یاری جدا افتاد دور، باز جوید روزگار وصل و نور.", "author": "مولانا", "cat": "عرفان", "en": "Listen to the reed, how it tells a tale of separations."},
+    {"text": "هر که را اسرار حق آموختند، مهر کردند و دهانش دوختند. راز عارف در سکوت اوست.", "author": "مولانا", "cat": "عرفان", "en": "Whoever was taught the secrets of truth had their mouth sealed with a kiss."},
+    {"text": "از کوزه همان برون تراود که در اوست. آدمی هر چه در باطن دارد، در ظاهر نشان می‌دهد.", "author": "مولانا", "cat": "حکمت", "en": "From the jug flows only what is within it."},
+    {"text": "عشق آمد عقل را بیگانه کرد. عقل می‌گوید برو، عشق می‌گوید بمان؛ کدام را بشنوی؟", "author": "مولانا", "cat": "عشق", "en": "Love came and made reason a stranger."},
+    {"text": "آتش عشق است کاندر نی فتاد. سوختن شیرین است وقتی برای خدا باشد.", "author": "مولانا", "cat": "عشق", "en": "It is the fire of love that has fallen into the reed."},
+    {"text": "خاموشی دریای علم است و کلام چون ساحل. عمق دریا را در سکوت می‌یابی.", "author": "مولانا", "cat": "عرفان", "en": "Silence is the sea of knowledge; speech is but its shore."},
+    {"text": "در درون هر آدمی جهانی است، کاو به غفلت آن جهان را می‌خورد.", "author": "مولانا", "cat": "فلسفه", "en": "Within every person is a world, which they devour in heedlessness."},
+    {"text": "آدمی دید است و باقی پوست است. دید آن باشد که دید دوست است.", "author": "مولانا", "cat": "عرفان", "en": "A person is vision and the rest is just skin."},
+    # حافظ
+    {"text": "رسید مژده که ایام غم نخواهد ماند. چنان نماند و چنین هم نخواهد ماند.", "author": "حافظ", "cat": "انگیزشی", "en": "Good news arrived: the days of sorrow shall not last."},
+    {"text": "دلا بسوز که سوز تو کارها بکند. نفس گرم حافظ دل سنگ را آب می‌کند.", "author": "حافظ", "cat": "عشق", "en": "Oh heart, burn! for your burning shall accomplish things."},
+    {"text": "بیا که قصر امل سخت سست بنیاد است. بیار باده که بنیاد عمر بر باد است.", "author": "حافظ", "cat": "فلسفه", "en": "Come, for the palace of hope has a very weak foundation."},
+    {"text": "دنیا به کسی وفا نکرد که دل بست. بگذار و بگذر که این رسم دوران است.", "author": "حافظ", "cat": "حکمت", "en": "The world has been faithful to no one who gave their heart to it."},
+    {"text": "خوش باش دل که باز آید آنچه رفت. صبر کن ای دل که صبر آسان‌تر از گریه نیست.", "author": "حافظ", "cat": "انگیزشی", "en": "Be glad, oh heart, for what has gone shall return."},
+    {"text": "غم دل با که بگویم که در این دور جهان، مردم چشمم ندیده‌ست کسی دردم را.", "author": "حافظ", "cat": "دل_نوشت", "en": "To whom shall I tell the sorrow of my heart?"},
+    # سعدی
+    {"text": "بنی آدم اعضای یک پیکرند که در آفرینش ز یک گوهرند. چو عضوی به درد آورد روزگار، دگر عضوها را نماند قرار.", "author": "سعدی", "cat": "حکمت", "en": "Human beings are members of a whole, in creation of one essence and soul."},
+    {"text": "علم بی عمل چون درخت بی ثمر است. هر که عمل نکند، علمش وبال اوست.", "author": "سعدی", "cat": "حکمت", "en": "Knowledge without action is like a tree without fruit."},
+    {"text": "تندرستی گنجی است پنهان. قدر آن را بدان پیش از آنکه از دستش بدهی.", "author": "سعدی", "cat": "حکمت", "en": "Good health is a hidden treasure."},
+    {"text": "هر که نیاموخت از گذشت روزگار، هیچ نیاموزد ز هیچ آموزگار.", "author": "سعدی", "cat": "حکمت", "en": "Whoever has not learned from the passage of time, will learn from no teacher."},
+    {"text": "آدمی را یک سخن ویران کند، یک سخن هم گمشده را رام کند. زبان در دهان نگه‌دار.", "author": "سعدی", "cat": "حکمت", "en": "One word can destroy a person; one word can also tame a lost soul."},
+    # فردوسی
+    {"text": "توانا بود هر که دانا بود. ز دانش دل پیر برنا بود. علم بخوان تا جوان بمانی.", "author": "فردوسی", "cat": "انگیزشی", "en": "Whoever is wise shall be powerful; knowledge keeps the old heart young."},
+    {"text": "الهی چنان کن سرانجام کار، تو خشنود باشی و ما رستگار.", "author": "فردوسی", "cat": "عرفان", "en": "O God, arrange the end of our affairs so that You are pleased and we are saved."},
+    {"text": "میازار موری که دانه‌کش است، که جان دارد و جان شیرین خوش است.", "author": "فردوسی", "cat": "حکمت", "en": "Do not hurt the ant that carries its grain; it has a soul and a soul is precious."},
+    {"text": "چو فردا شود فکر فردا کنیم. همین امشب باید که شادی کنیم.", "author": "فردوسی", "cat": "فلسفه", "en": "When tomorrow comes, we shall think of tomorrow; tonight we must rejoice."},
+    # تولستوی
+    {"text": "بشر را محبت کافی است برای رستگاری. همه چیز با محبت حل می‌شود.", "author": "لئو تولستوی", "cat": "عشق", "en": "Love alone is enough for humanity's salvation."},
+    {"text": "زندگی کوتاه است، پس آن را با کینه و نفرت تلف مکن. ببخش و آزاد باش.", "author": "لئو تولستوی", "cat": "حکمت", "en": "Life is too short to waste on hatred and resentment. Forgive and be free."},
+    {"text": "همه می‌خواهند دنیا را تغییر دهند، اما کسی نمی‌خواهد خود را تغییر دهد.", "author": "لئو تولستوی", "cat": "فلسفه", "en": "Everyone thinks of changing the world, but no one thinks of changing himself."},
+    {"text": "مهم‌ترین لحظه همیشه حال است؛ مهم‌ترین کار همین کاری است که الان داری انجام می‌دهی.", "author": "لئو تولستوی", "cat": "انگیزشی", "en": "The most important moment is always now; the most important task is what you are doing right now."},
+    {"text": "عشق واقعی یعنی خواستن خوشبختی دیگری، حتی اگر خوشبختی او بدون تو باشد.", "author": "لئو تولستوی", "cat": "عشق", "en": "True love means wanting the happiness of the other, even if that happiness is without you."},
+    {"text": "قوی‌ترین سلاح‌ها عشق و صبر هستند. هیچ دیواری در برابر این دو نمی‌ایستد.", "author": "لئو تولستوی", "cat": "انگیزشی", "en": "The most powerful weapons are love and patience."},
+    # دوستایوفسکی
+    {"text": "تنها راه گریز از دیوانگی، عاشق شدن است. دیوانه‌ای که عاشق است، عاقل‌تر از عاقلی است که عاشق نیست.", "author": "فئودور دوستایوفسکی", "cat": "عشق", "en": "The only escape from madness is to fall in love."},
+    {"text": "زیبایی جهان را نجات خواهد داد. اما اول باید خودت زیبا باشی.", "author": "فئودور دوستایوفسکی", "cat": "فلسفه", "en": "Beauty will save the world."},
+    {"text": "انسان موجودی است که به همه چیز عادت می‌کند. و شاید این بهترین تعریف اوست.", "author": "فئودور دوستایوفسکی", "cat": "فلسفه", "en": "Man is a creature that can get used to anything."},
+    {"text": "دوست داشتن یعنی دیدن انسان آنگونه که خدا او را آفریده، نه آنگونه که گناه او را ساخته.", "author": "فئودور دوستایوفسکی", "cat": "عشق", "en": "To love someone means to see them as God intended them to be."},
+    {"text": "درد را می‌توان کشید؛ خجالت، سخت‌تر است. درد تمام می‌شود، خجالت می‌ماند.", "author": "فئودور دوستایوفسکی", "cat": "فلسفه", "en": "Pain can be endured; shame is harder. Pain ends; shame remains."},
+    # نیچه
+    {"text": "آنچه مرا نکشد، قوی‌ترم می‌کند. پس از هر سختی، نسخه‌ای قوی‌تر از خودت متولد می‌شود.", "author": "فریدریش نیچه", "cat": "انگیزشی", "en": "What does not kill me, makes me stronger."},
+    {"text": "انسان چیزی است که باید از آن فراتر رفت. همیشه می‌توانی بیشتر از دیروز باشی.", "author": "فریدریش نیچه", "cat": "انگیزشی", "en": "Man is something that shall be surpassed."},
+    {"text": "بدون موسیقی، زندگی یک اشتباه بود. هنر است که زندگی را تحمل‌پذیر می‌کند.", "author": "فریدریش نیچه", "cat": "فلسفه", "en": "Without music, life would be a mistake."},
+    {"text": "کسی که دلیلی برای زیستن دارد، تقریباً هر چگونه زیستنی را تحمل می‌کند.", "author": "فریدریش نیچه", "cat": "انگیزشی", "en": "He who has a why to live can bear almost any how."},
+    # اینشتین
+    {"text": "تخیل مهم‌تر از دانش است. دانش محدود است، اما تخیل دنیا را در بر می‌گیرد.", "author": "آلبرت اینشتین", "cat": "انگیزشی", "en": "Imagination is more important than knowledge."},
+    {"text": "تنها زندگی که ارزش زیستن دارد، زندگی برای دیگران است. خود را در دیگران بیاب.", "author": "آلبرت اینشتین", "cat": "حکمت", "en": "Only a life lived for others is a life worthwhile."},
+    {"text": "دو چیز بی‌نهایت است: کیهان و حماقت بشر. البته در مورد اولی مطمئن نیستم.", "author": "آلبرت اینشتین", "cat": "فلسفه", "en": "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe."},
+    # فرانکل
+    {"text": "همه چیز را می‌توان از انسان گرفت، مگر آزادی انتخاب نگرش در هر شرایطی. این آخرین آزادی توست.", "author": "ویکتور فرانکل", "cat": "انگیزشی", "en": "Everything can be taken from a man but one thing: the freedom to choose one's attitude."},
+    {"text": "کسی که دلیلی برای زندگی دارد، هر چگونه زیستنی را تحمل می‌کند. معنا قوی‌ترین نیروست.", "author": "ویکتور فرانکل", "cat": "انگیزشی", "en": "He who has a why to live can bear almost any how."},
+    {"text": "انسان می‌تواند در هر شرایطی معنا بیابد. حتی در رنج، معنایی پنهان است.", "author": "ویکتور فرانکل", "cat": "فلسفه", "en": "Man can find meaning in any circumstances."},
+    # امام علی
+    {"text": "گاهی خاموش ماندن بلیغ‌ترین سخن است. سکوت عاقلانه بهتر از گفتار نادانانه است.", "author": "امام علی (ع)", "cat": "حکمت", "en": "Sometimes silence is the most eloquent speech."},
+    {"text": "ارزش هر کس به اندازه همت اوست. کوچک فکر کنی کوچک می‌مانی.", "author": "امام علی (ع)", "cat": "انگیزشی", "en": "The value of every person is equal to their ambition."},
+    {"text": "دانش گنجی است که صاحبش را می‌پاید و هیچ دزدی نمی‌تواند آن را بدزدد.", "author": "امام علی (ع)", "cat": "حکمت", "en": "Knowledge is a treasure that guards its owner."},
+    {"text": "با مردم چنان باش که اگر مردی بر تو بگریند و اگر زیستی مشتاقت باشند.", "author": "امام علی (ع)", "cat": "حکمت", "en": "Be with people such that if you die, they weep for you, and if you live, they long for you."},
+    {"text": "برادر دینی تو یا گناهت را می‌پوشاند، یا دردت را درمان می‌کند، یا خیری به تو می‌رساند.", "author": "امام علی (ع)", "cat": "حکمت", "en": "Your true brother either covers your sin, heals your pain, or brings you good."},
+    # خواجه عبدالله انصاری
+    {"text": "سالک را سه نشانه است: کم خوردن، کم خفتن، کم گفتن. هر که این سه را نگه دارد، به مقصد می‌رسد.", "author": "خواجه عبدالله انصاری", "cat": "عرفان", "en": "The seeker has three signs: eating little, sleeping little, speaking little."},
+    {"text": "الهی اگر بهشت را آفریدی برای ما کافی است که تو را می‌شناسیم؛ بهشت کجاست که تو نباشی؟", "author": "خواجه عبدالله انصاری", "cat": "عرفان", "en": "O God, if You created paradise, it is enough that we know You."},
+    # ماندلا
+    {"text": "شجاعت یعنی ترسیدن و باز هم قدم برداشتن. قهرمان کسی نیست که نمی‌ترسد؛ کسی است که با ترس پیش می‌رود.", "author": "نلسون ماندلا", "cat": "انگیزشی", "en": "Courage is not the absence of fear, but the triumph over it."},
+    {"text": "آموزش قوی‌ترین سلاحی است که می‌توانی برای تغییر دنیا استفاده کنی.", "author": "نلسون ماندلا", "cat": "انگیزشی", "en": "Education is the most powerful weapon you can use to change the world."},
+    # خیام
+    {"text": "هر که آمد عمارت نو ساخت، رفت و منزل به دیگری پرداخت. ما هم خواهیم رفت؛ پس چه غمی؟", "author": "عمر خیام", "cat": "فلسفه", "en": "Whoever came built a new dwelling, left and gave it to another."},
+    {"text": "این قافله عمر عجب می‌گذرد. دریاب که این کاروان می‌گذرد. لحظه را غنیمت شمار.", "author": "عمر خیام", "cat": "فلسفه", "en": "This caravan of life passes strangely; seize the moment, for this caravan is passing."},
+    {"text": "می خور که عقل را این سخن خوش آید. آنچه در دل داری بگو؛ که امروز فرصت است.", "author": "عمر خیام", "cat": "فلسفه", "en": "Drink, for reason approves of this saying."},
+    # اریک فروم
+    {"text": "زندگی یک هنر است، و مثل هر هنری باید تمرین کرد. هیچ‌کس با هنر زندگی به دنیا نمی‌آید.", "author": "اریک فروم", "cat": "فلسفه", "en": "Life is an art, and like any art it must be practiced."},
+    {"text": "عشق تنها پاسخ معقول به مسئله وجود انسان است. بدون عشق، وجود پوچ است.", "author": "اریک فروم", "cat": "عشق", "en": "Love is the only sane and satisfactory answer to the problem of human existence."},
+    # دل نوشت‌های جدید
+    {"text": "گاهی تنها ماندن نشانه رشد است، نه شکست. آدم‌های کوچک در جمع زندگی می‌کنند، بزرگ‌ها در خلوت رشد می‌کنند.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Sometimes being alone is a sign of growth, not failure."},
+    {"text": "اگر همه رفتند، شاید وقت آن رسیده که با خودت بمانی. شاید خودت بهترین همراه توی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "If everyone left, perhaps it's time to stay with yourself."},
+    {"text": "درد هم معلم است، اگر بگذاری درس بدهد. هر دردی پیامی دارد؛ گوش کن.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Pain is also a teacher, if you let it teach."},
+    {"text": "بعضی آدم‌ها برای یاد دادن می‌آیند، نه برای ماندن. وقتی رفتند، به جای گریه، از درسشان ممنون باش.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Some people come to teach, not to stay."},
+    {"text": "هر چیزی که از دست می‌دهی، اگر صبر کنی، جایش را چیز بهتری می‌گیرد. صبر کن.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Everything you lose, if you are patient, will be replaced by something better."},
+    {"text": "سکوتت گاهی بلندتر از هر فریادی است. نه همه چیز را باید توضیح داد.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Your silence is sometimes louder than any cry."},
+    {"text": "آدم وقتی می‌شکند، تازه می‌فهمد از چه ساخته شده. شکستن شرط شناختن خود است.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "When a person breaks, they finally understand what they are made of."},
+    {"text": "وقتی همه در می‌روند، خدا می‌ماند. و شاید همین رفتن‌ها برای رسیدن به خدا بود.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "When everyone leaves, God remains."},
+    {"text": "بعضی زخم‌ها برای همیشه نمی‌مانند؛ فقط جایشان می‌ماند تا یادت بیاید که زنده بودی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Some wounds don't last forever; only their scars remain to remind you that you lived."},
+    {"text": "در دل هر انسانی چراغی است؛ عشق آن را روشن می‌کند و غرور آن را خاموش.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "In every person's heart is a lamp; love lights it and pride extinguishes it."},
+    {"text": "تنهایی عذاب نیست اگر با خودت باشی. عذاب آن است که در جمع هم تنها باشی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Loneliness is not torment if you are with yourself."},
+    {"text": "گاهی باید بگذاری بروند تا بفهمی چه داشتی. ولی وقتی فهمیدی، دیگر نگران نباش.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Sometimes you must let them go to understand what you had."},
+    {"text": "ریشه درخت را نمی‌بینی ولی می‌دانی هست؛ ایمان هم همین است. نادیدنی اما حامل همه چیز.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "You can't see the roots of a tree, but you know they're there; faith is the same."},
+    {"text": "دنیا آینه است؛ هرچه در آن ببینی بازتاب درون توست. خود را اصلاح کن، دنیا درست می‌شود.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "The world is a mirror; what you see in it reflects your inner self."},
+    {"text": "قلب هر انسانی کتابی است؛ بخوانش. اما اول یاد بگیر چطور کتاب بخوانی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Every person's heart is a book; read it."},
+    {"text": "کسی که امروز را دوست دارد، نگران فردا نیست. حال را زندگی کن.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "One who loves today is not worried about tomorrow."},
+    {"text": "وقتی دیگر نمی‌توانی ادامه دهی، به یاد بیاور چرا شروع کردی. شروع تو همیشه قوی‌تر از خستگی توست.", "author": "دل نوشت", "cat": "انگیزشی", "en": "When you can no longer continue, remember why you started."},
+    {"text": "خو
