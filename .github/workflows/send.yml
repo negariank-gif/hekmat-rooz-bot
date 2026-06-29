@@ -2,10 +2,10 @@ name: Send Hekmat
 
 on:
   schedule:
-    - cron: '0 3 * * *'
-    - cron: '0 9 * * *'
-    - cron: '0 13 * * *'
-    - cron: '0 17 * * *'
+    - cron: '30 3 * * *'
+    - cron: '30 9 * * *'
+    - cron: '30 13 * * *'
+    - cron: '30 17 * * *'
   workflow_dispatch:
 
 jobs:
