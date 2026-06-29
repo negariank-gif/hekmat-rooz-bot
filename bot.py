@@ -137,4 +137,169 @@ quotes_main = [
     {"text": "قلب هر انسانی کتابی است؛ بخوانش. اما اول یاد بگیر چطور کتاب بخوانی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Every person's heart is a book; read it."},
     {"text": "کسی که امروز را دوست دارد، نگران فردا نیست. حال را زندگی کن.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "One who loves today is not worried about tomorrow."},
     {"text": "وقتی دیگر نمی‌توانی ادامه دهی، به یاد بیاور چرا شروع کردی. شروع تو همیشه قوی‌تر از خستگی توست.", "author": "دل نوشت", "cat": "انگیزشی", "en": "When you can no longer continue, remember why you started."},
-    {"text": "خو
+    {"text": "خواندن یعنی سفر بدون ترک خانه. هر کتاب دنیایی است که به روی تو باز می‌شود.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Reading means traveling without leaving home."},
+    {"text": "هر کتابی که می‌خوانی بخشی از تو می‌شود. پس مراقب باش چه می‌خوانی.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Every book you read becomes a part of you."},
+    {"text": "کتاب‌ها آینه‌ای هستند که ما را با خودمان روبرو می‌کنند. از این رو‌برویی نترس.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Books are mirrors that confront us with ourselves."},
+    {"text": "وقتی گم می‌شوی، کتاب بخوان تا خودت را پیدا کنی. صفحات کتاب نقشه راه بازگشت به خود هستند.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "When you are lost, read a book to find yourself."},
+    # رومی
+    {"text": "سکوت زبان عاشقان است. وقتی زبان از گفتن عاجز است، دل شروع به سخن می‌کند.", "author": "جلال‌الدین رومی", "cat": "عشق", "en": "Silence is the language of lovers."},
+    {"text": "تو را من چشم در راهم، شباهنگام که می‌دانم پگاه از پی شب تاریک می‌آید.", "author": "جلال‌الدین رومی", "cat": "عشق", "en": "I await you; I know that after the dark night, dawn will come."},
+    {"text": "درد عشق را دارویی نیست الا وصال. و وصال را پایانی نیست الا کمال.", "author": "جلال‌الدین رومی", "cat": "عشق", "en": "The pain of love has no remedy but union."},
+    {"text": "جان من جان جهانم می‌کند. عشق در جانم نهانم می‌کند.", "author": "جلال‌الدین رومی", "cat": "عشق", "en": "My soul makes me the soul of the world; love hides within my soul."},
+    # مارکوس اورلیوس
+    {"text": "ذهن خود را پاک نگه‌دار. آلودگی ذهن بدتر از آلودگی جسم است.", "author": "مارکوس اورلیوس", "cat": "فلسفه", "en": "Keep your mind clean; mental pollution is worse than physical."},
+    {"text": "آنچه در توان داری بکن، با آنچه داری، آنجا که هستی.", "author": "مارکوس اورلیوس", "cat": "انگیزشی", "en": "Do what you can, with what you have, where you are."},
+    {"text": "بهترین انتقام، متفاوت بودن از کسی است که به تو آسیب زد.", "author": "مارکوس اورلیوس", "cat": "حکمت", "en": "The best revenge is to be unlike the one who harmed you."},
+    # سقراط
+    {"text": "من می‌دانم که هیچ نمی‌دانم. این اولین قدم به سوی دانستن است.", "author": "سقراط", "cat": "فلسفه", "en": "I know that I know nothing; this is the first step toward knowing."},
+    {"text": "زندگی بدون ارزیابی ارزش زیستن ندارد. هر شب از خود بپرس: امروز چه کردم؟", "author": "سقراط", "cat": "فلسفه", "en": "The unexamined life is not worth living."},
+    # ابوعلی سینا
+    {"text": "دل را به علم و دانش بساز که علم نور است و جهل تاریکی.", "author": "ابوعلی سینا", "cat": "حکمت", "en": "Build your heart with knowledge; knowledge is light and ignorance is darkness."},
+    {"text": "درمان بیشتر بیماری‌ها در خود ماست؛ صبر، آرامش و امید بهترین داروهایند.", "author": "ابوعلی سینا", "cat": "حکمت", "en": "The cure for most ailments is within us; patience, calm, and hope are the best medicines."},
+    # ناپلئون هیل
+    {"text": "آنچه ذهن می‌تواند تصور کند و به آن ایمان آورد، می‌تواند به دست آورد.", "author": "ناپلئون هیل", "cat": "انگیزشی", "en": "Whatever the mind can conceive and believe, it can achieve."},
+    # پائولو کوئلیو
+    {"text": "وقتی چیزی را از ته دل بخواهی، تمام کیهان دست به دست هم می‌دهد تا به آن برسی.", "author": "پائولو کوئلیو", "cat": "انگیزشی", "en": "When you want something, all the universe conspires in helping you to achieve it."},
+    {"text": "پیش از رسیدن به رویا، باید از همه چیزی که داری دست بکشی.", "author": "پائولو کوئلیو", "cat": "انگیزشی", "en": "Before a dream is realized, you must give up everything you have."},
+    # رابیندرانات تاگور
+    {"text": "من خواب دیدم که زندگی شادی است. بیدار شدم و دیدم زندگی خدمت است. خدمت کردم و دیدم که خدمت شادی است.", "author": "رابیندرانات تاگور", "cat": "حکمت", "en": "I dreamed that life was joy. I woke and saw that life was service. I served and saw that service was joy."},
+    # مادر ترزا
+    {"text": "اگر به همه انسان‌ها محبت نمی‌کنی، حداقل به یک نفر آسیب نزن.", "author": "مادر ترزا", "cat": "حکمت", "en": "If you can't love everyone, at least don't hurt anyone."},
+    {"text": "ما همه می‌توانیم کارهای بزرگ انجام دهیم. ولی اگر با محبت کوچک عمل کنیم، دنیا عوض می‌شود.", "author": "مادر ترزا", "cat": "حکمت", "en": "We can do no great things; only small things with great love."},
+    # احادیث و روایات
+    {"text": "هر کس خود را بشناسد، خدا را شناخته است. خودشناسی آغاز خداشناسی است.", "author": "حکمت اسلامی", "cat": "عرفان", "en": "Whoever knows himself, knows God."},
+    {"text": "به کسی که به تو بدی کرده نیکی کن؛ که این نه ضعف، بلکه قدرت است.", "author": "حکمت اسلامی", "cat": "حکمت", "en": "Do good to one who has done evil to you; this is not weakness, but strength."},
+    # جملات فلسفی جدید
+    {"text": "زندگی همان است که در فاصله برنامه‌ریزی‌های ما اتفاق می‌افتد. پس لحظه را دریاب.", "author": "دل نوشت", "cat": "فلسفه", "en": "Life is what happens in the gaps between our plans."},
+    {"text": "خوشبخت نیست آن که همه چیز دارد، خوشبخت است آن که از آنچه دارد راضی است.", "author": "دل نوشت", "cat": "حکمت", "en": "Happy is not the one who has everything, but the one who is satisfied with what they have."},
+    {"text": "گاهی سخت‌ترین کار، رها کردن چیزی است که قرار بود خوب باشد ولی نشد.", "author": "دل نوشت", "cat": "دل_نوشت", "en": "Sometimes the hardest thing is letting go of something that was supposed to be good."},
+    {"text": "آنچه را که نمی‌توانی تغییر دهی، بپذیر. آنچه را که می‌توانی، تغییر بده. و حکمت داشته باش که تفاوت را بدانی.", "author": "دل نوشت", "cat": "حکمت", "en": "Accept what you cannot change; change what you can; and have the wisdom to know the difference."},
+    {"text": "بهترین سرمایه‌گذاری، سرمایه‌گذاری بر روی خودت است. هیچ بازدهی بالاتری وجود ندارد.", "author": "دل نوشت", "cat": "انگیزشی", "en": "The best investment is investing in yourself."},
+]
+
+all_quotes = quotes_main
+
+def get_time_based_quotes():
+    now = datetime.datetime.utcnow()
+    iran_hour = (now.hour + 3) % 24
+    if iran_hour < 10:
+        return quotes_morning
+    elif iran_hour >= 21:
+        return quotes_night
+    else:
+        return all_quotes
+
+def create_gradient(width, height, color1, color2):
+    image = Image.new('RGB', (width, height))
+    draw = ImageDraw.Draw(image)
+    for y in range(height):
+        ratio = y / height
+        r = int(color1[0] + (color2[0] - color1[0]) * ratio)
+        g = int(color1[1] + (color2[1] - color1[1]) * ratio)
+        b = int(color1[2] + (color2[2] - color1[2]) * ratio)
+        draw.line([(0, y), (width, y)], fill=(r, g, b))
+    return image
+
+def create_image(quote_text, author, cat):
+    width, height = 1080, 1080
+    cat_info = CATEGORIES.get(cat, CATEGORIES["حکمت"])
+    icon = cat_info["icon"]
+
+    img = create_gradient(width, height, cat_info["color1"], cat_info["color2"])
+    draw = ImageDraw.Draw(img)
+
+    # خطوط تزئینی
+    draw.rectangle([(60, 60), (width-60, 65)], fill=(255, 215, 0))
+    draw.rectangle([(60, height-65), (width-60, height-60)], fill=(255, 215, 0))
+    draw.rectangle([(60, 60), (65, height-60)], fill=(255, 215, 0))
+    draw.rectangle([(width-65, 60), (width-60, height-60)], fill=(255, 215, 0))
+
+    try:
+        font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 58)
+        font_normal = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 42)
+        font_author = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 34)
+        font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 28)
+    except:
+        font_large = ImageFont.load_default()
+        font_normal = font_large
+        font_author = font_large
+        font_small = font_large
+
+    # آیکون دسته
+    draw.text((width//2, 130), icon, font=font_large, fill=(255, 215, 0), anchor="mm")
+
+    # شکستن متن به خطوط
+    words = quote_text.split()
+    lines = []
+    current_line = ""
+    max_chars = 22
+    for word in words:
+        if len(current_line) + len(word) + 1 <= max_chars:
+            current_line += (" " + word if current_line else word)
+        else:
+            if current_line:
+                lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
+
+    # رسم متن - خط اول بزرگ‌تر
+    line_height_large = 72
+    line_height_normal = 56
+    total_h = line_height_large + (len(lines)-1) * line_height_normal if lines else 0
+    start_y = (height - total_h) // 2 - 20
+
+    for i, line in enumerate(lines):
+        if i == 0:
+            font = font_large
+            y = start_y
+        else:
+            font = font_normal
+            y = start_y + line_height_large + (i-1) * line_height_normal
+
+        draw.text((width//2, y), line, font=font, fill=(255, 255, 255), anchor="mm")
+
+    # خط جداکننده
+    sep_y = start_y + line_height_large + (len(lines)-1) * line_height_normal + 35
+    draw.rectangle([(width//2 - 100, sep_y), (width//2 + 100, sep_y + 3)], fill=(255, 215, 0))
+
+    # نام نویسنده
+    draw.text((width//2, sep_y + 45), f"— {author}", font=font_author, fill=(255, 215, 0), anchor="mm")
+
+    # نام کانال
+    draw.text((width//2, height - 95), "@sanchobook", font=font_small, fill=(180, 180, 180), anchor="mm")
+
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes.seek(0)
+    return img_bytes
+
+def send_quote():
+    pool = get_time_based_quotes()
+    quote = random.choice(pool)
+
+    img_bytes = create_image(quote['text'], quote['author'], quote['cat'])
+
+    en_text = quote.get('en', '')
+    caption = (
+        f"<i>{quote['text']}</i>\n\n"
+        f"— <b>{quote['author']}</b>\n\n"
+    )
+    if en_text:
+        caption += f"<i>{en_text}</i>\n\n"
+    caption += f"{quote['tags']} #حکمت #عرفان"
+
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+    response = requests.post(url, data={
+        "chat_id": CHANNEL_ID,
+        "caption": caption,
+        "parse_mode": "HTML"
+    }, files={"photo": ("quote.png", img_bytes, "image/png")})
+
+    if response.status_code == 200:
+        print(f"ارسال شد: {quote['author']} - {quote['cat']}")
+    else:
+        print(f"خطا: {response.text}")
+
+if __name__ == "__main__":
+    send_quote()
