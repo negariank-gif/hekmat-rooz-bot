@@ -16,13 +16,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Font
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q fonts-hosny-amiri || true
-          fc-cache -f || true
-      - run: pip install requests Pillow arabic-reshaper python-bidi
+      - run: pip install requests
       - run: python bot.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      - name: Save sent log
+        run: |
+          git config user.email "bot@sanchobook.com"
+          git config user.name "HekmatBot"
+          git add sent_log.json || true
+          git commit -m "update sent log" || true
+          git push || true
