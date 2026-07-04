@@ -5,6 +5,18 @@ import json
 import datetime
 from PIL import Image, ImageDraw, ImageFont
 import io
+try:
+    import arabic_reshaper
+    from bidi.algorithm import get_display
+    HAS_BIDI = True
+except:
+    HAS_BIDI = False
+
+def fix_persian(text):
+    if HAS_BIDI:
+        reshaped = arabic_reshaper.reshape(text)
+        return get_display(reshaped)
+    return text
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = os.environ.get("TELEGRAM_CHANNEL_ID")
@@ -214,11 +226,27 @@ def create_image(quote_text, author, cat):
     draw.rectangle([(60, 60), (65, height-60)], fill=(255, 215, 0))
     draw.rectangle([(width-65, 60), (width-60, height-60)], fill=(255, 215, 0))
 
+    FONT_PATHS = [
+        "/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Regular.ttf",
+        "/usr/share/fonts/truetype/fonts-hosny-amiri/Amiri-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ]
+    def find_font(bold=False):
+        for p in FONT_PATHS:
+            try:
+                ImageFont.truetype(p, 10)
+                if bold and "Bold" in p:
+                    return p
+                if not bold and "Bold" not in p:
+                    return p
+            except:
+                pass
+        return FONT_PATHS[-1]
     try:
-        font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 58)
-        font_normal = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 42)
-        font_author = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 34)
-        font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 28)
+        font_large = ImageFont.truetype(find_font(bold=True), 62)
+        font_normal = ImageFont.truetype(find_font(bold=False), 46)
+        font_author = ImageFont.truetype(find_font(bold=True), 36)
+        font_small = ImageFont.truetype(find_font(bold=False), 28)
     except:
         font_large = ImageFont.load_default()
         font_normal = font_large
@@ -257,14 +285,14 @@ def create_image(quote_text, author, cat):
             font = font_normal
             y = start_y + line_height_large + (i-1) * line_height_normal
 
-        draw.text((width//2, y), line, font=font, fill=(255, 255, 255), anchor="mm")
+        draw.text((width//2, y), fix_persian(line), font=font, fill=(255, 255, 255), anchor="mm")
 
     # خط جداکننده
     sep_y = start_y + line_height_large + (len(lines)-1) * line_height_normal + 35
     draw.rectangle([(width//2 - 100, sep_y), (width//2 + 100, sep_y + 3)], fill=(255, 215, 0))
 
     # نام نویسنده
-    draw.text((width//2, sep_y + 45), f"— {author}", font=font_author, fill=(255, 215, 0), anchor="mm")
+    draw.text((width//2, sep_y + 45), fix_persian(f"— {author}"), font=font_author, fill=(255, 215, 0), anchor="mm")
 
     # نام کانال
     draw.text((width//2, height - 95), "@sanchobook", font=font_small, fill=(180, 180, 180), anchor="mm")
