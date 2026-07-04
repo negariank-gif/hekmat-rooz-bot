@@ -1,16 +1,17 @@
-name: Send Hekmat
+name: Send Libro
 
 on:
   schedule:
     - cron: '30 3 * * *'
-    - cron: '30 9 * * *'
+    - cron: '30 8 * * *'
     - cron: '30 13 * * *'
-    - cron: '30 17 * * *'
   workflow_dispatch:
 
 jobs:
   send:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,7 +25,7 @@ jobs:
       - name: Save sent log
         run: |
           git config user.email "bot@sanchobook.com"
-          git config user.name "HekmatBot"
+          git config user.name "LibroBot"
           git add sent_log.json || true
           git commit -m "update sent log" || true
           git push || true
